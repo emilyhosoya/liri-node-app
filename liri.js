@@ -49,6 +49,11 @@ const liriBot = {
   // * The album that the song is from
   // If no song is provided then your program will default to "The Sign" by Ace of Base.
   "spotify-this-song": songTitle => {
+    // Default song if none is provided
+    if (songTitle === undefined) {
+      songTitle = "The Sign%20artist:Ace+of+Base";
+    }
+
     const spotify = new Spotify(keychain.spotifyKeys);
 
     spotify.search(
@@ -80,7 +85,7 @@ const liriBot = {
     );
 
     console.log("Spotify is working... just wait!");
-    console.log(`Your song: '${process.argv[3]}'`);
+    // console.log(`Your song: '${process.argv[3]}'`);
   },
   // -----------------------------------------
   // -------------- OMDB QUERY ---------------
@@ -97,6 +102,11 @@ const liriBot = {
   // If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
 
   "movie-this": movieName => {
+    // Default movie if none is provided
+    if (movieName === undefined) {
+      movieName = "Mr. Nobody";
+    }
+
     const queryUrl =
       "http://www.omdbapi.com/?t=" +
       movieName +
@@ -129,7 +139,6 @@ const liriBot = {
       }
     });
 
-    console.log(`Your move: '${process.argv[3]}'`);
     console.log("Movie request is working... just wait!");
   },
   // -----------------------------------------
