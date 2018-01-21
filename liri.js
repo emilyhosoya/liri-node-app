@@ -8,7 +8,7 @@ const fs = require("fs");
 let currentCommand = process.argv[2];
 let optionalArgument = process.argv[3];
 
-const logOutput = function(output) {
+const logOutput = output => {
   fs.appendFile("log.txt", output, "utf8", function(error) {
     if (error) {
       return console.log(error);
