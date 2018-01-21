@@ -8,14 +8,14 @@ const fs = require("fs");
 let currentCommand = process.argv[2];
 let optionalArgument = process.argv[3];
 
-// const writeOutput = function(input) {
-//   fs.writeFile("log.txt", input, function(error) {
-//     if (error) {
-//       return console.log(error);
-//     }
-//     console.log("log.txt was updated!");
-//   });
-// };
+const logOutput = function(output) {
+  fs.appendFile("log.txt", output, "utf8", function(error) {
+    if (error) {
+      return console.log(error);
+    }
+    console.log("log.txt was updated!");
+  });
+};
 
 const liriBot = {
   // -----------------------------------------
@@ -24,11 +24,12 @@ const liriBot = {
   // This will show your last 20 tweets and when they were created at in your terminal/bash window
   "my-tweets": () => {
     const client = new Twitter(keychain.twitterKeys);
-
     const params = {
       screen_name: "catfishcowgirl9",
       count: 20
     };
+    let results = [];
+
     client.get("statuses/user_timeline", params, function(
       error,
       tweets,
@@ -38,14 +39,18 @@ const liriBot = {
         return console.log("Error occurred: " + error);
       } else {
         tweets.forEach(function(tweet) {
-          console.log(`
+          let output = `
           ------------------------------\n
           ${tweet.text}\n
           ${tweet.created_at}
-          `);
+          `;
+          console.log(output);
+          results.push(output);
         });
       }
+      logOutput(results);
     });
+
     console.log("Twitter is working... just wait!");
   },
   // -----------------------------------------
@@ -58,12 +63,13 @@ const liriBot = {
   // * The album that the song is from
   // If no song is provided then your program will default to "The Sign" by Ace of Base.
   "spotify-this-song": songTitle => {
+    const spotify = new Spotify(keychain.spotifyKeys);
+    let results = [];
+
     // Default song if none is provided
     if (songTitle === undefined) {
       songTitle = "The Sign%20artist:Ace+of+Base";
     }
-
-    const spotify = new Spotify(keychain.spotifyKeys);
 
     spotify.search(
       { type: "track", query: songTitle, offset: 0, limit: 1 },
@@ -71,8 +77,9 @@ const liriBot = {
         if (error) {
           return console.log("Error occurred: " + error);
         } else {
-          const results = data.tracks.items;
-          results.forEach(function(song) {
+          const searchResults = data.tracks.items;
+          // I'm using a loop just in case limit param is increased
+          searchResults.forEach(function(song) {
             // For songs with multiple artists, add artist names to an array
             const artistFullData = song.artists;
             let artistNamesList = [];
@@ -81,20 +88,22 @@ const liriBot = {
               artistNamesList.push(artistName);
             });
 
-            console.log(`
+            let output = `
             ------------------------------\n
             Artist: ${artistNamesList.join(", ")}\n
             Song: ${song.name}\n
             Song Preview: ${song.preview_url}\n
             Album: ${song.album.name}\n
-            `);
+            `;
+            console.log(output);
+            results.push(output);
           });
         }
+        logOutput(results);
       }
     );
 
     console.log("Spotify is working... just wait!");
-    // console.log(`Your song: '${process.argv[3]}'`);
   },
   // -----------------------------------------
   // -------------- OMDB QUERY ---------------
@@ -122,11 +131,13 @@ const liriBot = {
       "&y=&plot=short&apikey=trilogy";
     console.log(queryUrl);
 
+    let results = [];
+
     request(queryUrl, function(error, response, body) {
       if (error) {
         return console.log("Error occurred: " + error);
       } else {
-        console.log(`
+        let output = `
         ------------------------------\n
         Title: ${JSON.parse(body).Title}\n
         Release Year: ${JSON.parse(body).Year}\n
@@ -144,7 +155,10 @@ const liriBot = {
         Language: ${JSON.parse(body).Language}\n
         Plot: ${JSON.parse(body).Plot}\n
         Actors: ${JSON.parse(body).Actors}\n
-        `);
+        `;
+        console.log(output);
+        results.push(output);
+        logOutput(results);
       }
     });
 
