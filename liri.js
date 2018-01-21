@@ -8,6 +8,15 @@ const fs = require("fs");
 let currentCommand = process.argv[2];
 let optionalArgument = process.argv[3];
 
+// const writeOutput = function(input) {
+//   fs.writeFile("log.txt", input, function(error) {
+//     if (error) {
+//       return console.log(error);
+//     }
+//     console.log("log.txt was updated!");
+//   });
+// };
+
 const liriBot = {
   // -----------------------------------------
   // ---------- TWITTER QUERY ----------------
@@ -151,19 +160,11 @@ const liriBot = {
       if (error) {
         return console.log(error);
       } else {
-        const allCommands = data.split("\n");
+        const splitData = data.split(",");
+        currentCommand = splitData[0];
+        optionalArgument = splitData[1];
 
-        allCommands.forEach(function(element) {
-          element.split(",");
-        });
-
-        console.log(allCommands);
-
-        // dataArr.forEach(function(data) {
-        //   currentCommand = data[0];
-        //   optionalArgument = data[1];
-        // });
-        // console.log(currentCommand, optionalArgument);
+        liriBot[currentCommand](optionalArgument);
       }
     });
   }
