@@ -10,10 +10,7 @@ let optionalArgument = process.argv[3];
 
 const logOutput = output => {
   fs.appendFile("log.txt", output, "utf8", function(error) {
-    if (error) {
-      return console.log(error);
-    }
-    console.log("log.txt was updated!");
+    error ? console.log(error) : console.log("log.txt was updated!");
   });
 };
 
@@ -67,9 +64,7 @@ const liriBot = {
     let results = [];
 
     // Default song if none is provided
-    if (songTitle === undefined) {
-      songTitle = "The Sign%20artist:Ace+of+Base";
-    }
+    songTitle = songTitle || "The Sign%20artist:Ace+of+Base";
 
     spotify.search(
       { type: "track", query: songTitle, offset: 0, limit: 1 },
@@ -78,7 +73,7 @@ const liriBot = {
           return console.log("Error occurred: " + error);
         } else {
           const searchResults = data.tracks.items;
-          // I'm using a loop just in case limit param is increased
+          // I'm using a loop in case limit param is increased to show more than 1 search result
           searchResults.forEach(function(song) {
             // For songs with multiple artists, add artist names to an array
             const artistFullData = song.artists;
@@ -121,14 +116,9 @@ const liriBot = {
 
   "movie-this": movieName => {
     // Default movie if none is provided
-    if (movieName === undefined) {
-      movieName = "Mr. Nobody";
-    }
+    movieName = movieName || "Mr. Nobody";
 
-    const queryUrl =
-      "http://www.omdbapi.com/?t=" +
-      movieName +
-      "&y=&plot=short&apikey=trilogy";
+    const queryUrl = `http://www.omdbapi.com/?t=${movieName}&y=&plot=short&apikey=trilogy`;
     console.log(queryUrl);
 
     let results = [];
